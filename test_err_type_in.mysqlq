@@ -1,0 +1,10 @@
+-- Semantic error: type mismatch in IN list
+
+CREATE TABLE Items (
+    item_id  int,
+    category varchar(50),
+    price    float
+);
+
+-- Error: item_id is INT, but list contains a string literal
+SELECT item_id FROM Items WHERE item_id IN (1, 2, 'three');

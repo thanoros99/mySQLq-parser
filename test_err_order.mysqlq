@@ -1,0 +1,9 @@
+-- Syntax error: wrong clause order (ORDER BY before WHERE)
+
+CREATE TABLE T (
+    id  int,
+    val float
+);
+
+-- Error: ORDER BY comes before WHERE (wrong order)
+SELECT id FROM T ORDER BY id WHERE val > 1.0;

@@ -1,0 +1,9 @@
+-- Semantic error test: unknown table in FROM
+
+CREATE TABLE Departments (
+    dept_id int,
+    name    varchar(100)
+);
+
+-- Error: table 'Employees' was never created
+SELECT dept_id FROM Employees;

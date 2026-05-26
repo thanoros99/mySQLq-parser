@@ -1,0 +1,7 @@
+lex.yy.c
+parser.tab.c
+parser.tab.h
+myParser
+myParser.dSYM/
+*.o
+*.d

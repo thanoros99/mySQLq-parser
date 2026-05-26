@@ -1,0 +1,172 @@
+======================================================
+  BNF Grammar for mySQLq
+  (Αρχές Γλωσσών Προγραμματισμού & Μεταφραστών 2026)
+======================================================
+
+------------------------------
+  Tokens (terminal symbols)
+------------------------------
+
+Keywords (case-insensitive):
+  SELECT  FROM  WHERE  LIMIT  GROUP  ORDER  BY
+  IN  AND  OR  NOT  CREATE  TABLE  INT  FLOAT  VARCHAR
+  JOIN  ON  AS
+
+Operators:
+  =   !=   >   <   >=   <=
+
+Special characters:
+  ;   ,   (   )   .   *
+
+Identifiers (case-sensitive):
+  <identifier> ::= [a-zA-Z_][a-zA-Z0-9_]*
+
+Literals:
+  <integer>  ::= -?[0-9]+
+  <float>    ::= -?[0-9]+\.[0-9]+
+  <string>   ::= '[^']*'
+
+Comments:
+  -- single-line comment
+  /* multi-line comment */
+
+Whitespace: ignored
+
+------------------------------
+  Grammar (BNF)
+------------------------------
+
+<program>           ::= <statement_list>
+
+<statement_list>    ::= <statement>
+                      | <statement_list> <statement>
+
+<statement>         ::= <create_stmt> ;
+                      | <select_stmt> ;
+
+
+--- CREATE TABLE ---
+
+<create_stmt>       ::= CREATE TABLE <identifier> ( <col_def_list> )
+
+<col_def_list>      ::= <col_def>
+                      | <col_def_list> , <col_def>
+
+<col_def>           ::= <identifier> INT
+                      | <identifier> FLOAT
+                      | <identifier> VARCHAR ( <integer> )
+
+
+--- SELECT ---
+
+<select_stmt>       ::= SELECT <sel_col_list>
+                        FROM <table_ref>
+                        <join_list>
+                        [ WHERE <condition> ]
+                        [ GROUP BY <col_ref_list> ]
+                        [ ORDER BY <col_ref_list> ]
+                        [ LIMIT <integer> ]
+
+  Note: optional clauses must appear in the order shown above.
+        A different order is a syntax error.
+
+<sel_col_list>      ::= *
+                      | <sel_col_ref>
+                      | <sel_col_list> , <sel_col_ref>
+
+<sel_col_ref>       ::= <identifier>
+                      | <identifier> . <identifier>
+
+
+--- FROM and JOIN ---
+
+<table_ref>         ::= <identifier>
+                      | <identifier> AS <identifier>
+
+<join_list>         ::= ε
+                      | <join_list> <join_clause>
+
+<join_clause>       ::= JOIN <identifier> ON <join_cond>
+                      | JOIN <identifier> AS <identifier> ON <join_cond>
+
+<join_cond>         ::= <identifier> . <identifier> = <identifier> . <identifier>
+
+
+--- Column references (for WHERE, GROUP BY, ORDER BY) ---
+
+<col_ref_list>      ::= <col_ref>
+                      | <col_ref_list> , <col_ref>
+
+<col_ref>           ::= <identifier>
+                      | <identifier> . <identifier>
+
+
+--- WHERE condition ---
+
+<condition>         ::= <simple_cond>
+                      | <condition> AND <condition>
+                      | <condition> OR  <condition>
+                      | NOT <condition>
+                      | ( <condition> )
+
+<simple_cond>       ::= <col_ref> =  <value>
+                      | <col_ref> != <value>
+                      | <col_ref> >  <value>
+                      | <col_ref> <  <value>
+                      | <col_ref> >= <value>
+                      | <col_ref> <= <value>
+                      | <col_ref> IN     ( <value_list> )
+                      | <col_ref> NOT IN ( <value_list> )
+
+<value>             ::= <integer>
+                      | <float>
+                      | <string>
+
+<value_list>        ::= <value>
+                      | <value_list> , <value>
+
+
+======================================================
+  Semantic constraints (Q2)
+======================================================
+
+1. Table names in CREATE TABLE must be globally unique.
+
+2. A table referenced in FROM or JOIN must have been defined
+   by a previous CREATE TABLE statement.
+
+3. Column names within a single table must be unique.
+   (Different tables may share column names.)
+
+4. Columns in SELECT, WHERE, GROUP BY, ORDER BY must exist
+   in the table(s) being queried.
+
+5. In WHERE conditions:
+   a. INT    column:     only integer literals allowed
+   b. FLOAT  column:     integer or float literals allowed
+   c. VARCHAR column:    only string literals allowed
+   d. For IN / NOT IN:   every literal in the list must be
+                         compatible with the column type.
+
+6. LIMIT value must be a strictly positive integer.
+
+7. VARCHAR(n): n must be a strictly positive integer.
+
+
+======================================================
+  Semantic constraints (Q3 – JOIN and aliases)
+======================================================
+
+8. A table in JOIN must have been defined by CREATE TABLE.
+
+9. The ON condition references table_or_alias.column on
+   both sides; both must exist in their respective tables.
+
+10. When aliases are used (AS), columns must be referenced
+    as alias.column throughout SELECT, WHERE, GROUP BY,
+    ORDER BY, and ON clauses.
+
+11. Aliases must be unique within a query.
+
+12. When a table has an alias, it can only be referenced
+    by that alias (not by its original name).

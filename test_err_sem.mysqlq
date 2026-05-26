@@ -1,0 +1,12 @@
+-- Semantic error test: duplicate table name
+
+CREATE TABLE Employees (
+    id   int,
+    name varchar(100),
+    age  int
+);
+
+-- Error: table 'Employees' already exists
+CREATE TABLE Employees (
+    code int
+);

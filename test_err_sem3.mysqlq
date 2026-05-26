@@ -1,0 +1,10 @@
+-- Semantic error test: type mismatch in WHERE condition
+
+CREATE TABLE Products (
+    product_id int,
+    name       varchar(100),
+    price      float
+);
+
+-- Error: comparing int column with a string literal
+SELECT product_id FROM Products WHERE product_id = 'hello';

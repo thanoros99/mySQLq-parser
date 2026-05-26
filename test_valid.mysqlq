@@ -1,0 +1,59 @@
+-- Valid test: basic CREATE TABLE and SELECT statements
+
+CREATE TABLE Students (
+    student_id  int,
+    first_name  varchar(50),
+    last_name   varchar(50),
+    gpa         float
+);
+
+CREATE TABLE Courses (
+    course_id  int,
+    title      varchar(100),
+    credits    int
+);
+
+CREATE TABLE Enrollments (
+    enrollment_id int,
+    student_id    int,
+    course_id     int,
+    grade         varchar(2)
+);
+
+-- Simple SELECT *
+select * from Students;
+
+-- SELECT with WHERE
+SELECT student_id, first_name, last_name
+FROM Students
+WHERE gpa >= 3.0;
+
+-- SELECT with WHERE AND
+SELECT student_id
+FROM Students
+WHERE gpa > 2.5 AND student_id != -1;
+
+-- SELECT with GROUP BY, ORDER BY, LIMIT
+SELECT course_id
+FROM Courses
+WHERE credits > 2
+GROUP BY course_id
+ORDER BY course_id
+LIMIT 10;
+
+-- SELECT with IN
+SELECT student_id
+FROM Students
+WHERE gpa IN (3.5, 4.0)
+LIMIT 5;
+
+-- SELECT with NOT IN
+SELECT student_id
+FROM Students
+WHERE first_name NOT IN ('Alice', 'Bob');
+
+-- Case-insensitive keywords
+SeLeCt student_id FROM Students WHERE gpa <= 4.0;
+
+/* Block comment test */
+SELECT course_id, title, credits FROM Courses WHERE credits >= 3 ORDER BY credits;
